@@ -1,10 +1,12 @@
 # Publii Plugin: Easy .htaccess
 An easy .htaccess editor for Publii.
 
-<p><img height="100" alt="publii plugin" title="Copy text icons" src="https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/refs/head/main/.assets/thumbnail.svg"></p>
+<p><img height="100" alt="publii plugin" title="Copy text icons" src="https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/802bbe1ad69aafd209050b19b37371a913fe547f/.assets/thumbnail.svg"></p>
 
 ## Features
 This plugin creates an .htaccess file with essential optimizations to enhance site performance. It includes HTTPS and 404 redirections, Gzip file compression, and custom directives. Please note that modifying the .htaccess file is at your own risk; the author assumes no responsibility for malfunctions or data loss. **A backup of the original .htaccess file is strongly recommended**, as these changes cannot be undone. This feature only works on Apache servers with .htaccess support.
+
+![Publii plugin screenshot](https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/refs/heads/main/.assets/screen.png)
 
 This plugin uses directives aimed at maximizing compatibility across different servers. However, compatibility is not guaranteed as the behavior of these directives can vary significantly depending on server configurations, which may differ widely. It's recommended to review and test the generated .htaccess file to ensure it functions as expected on your specific server environment.
 
@@ -42,12 +44,9 @@ Reset all customizations by creating an empty `.htaccess` file. This option is e
 ## Uninstalling
 Since Publii plugins do not work directly on the server and currently cannot delete files, uninstalling or deactivating the plugin will leave the last version of the .htaccess file created by the plugin on the server. If you wish to remove this file, you have two options:  
 1. Manually delete the file directly from the server (the obvious option);  
-2. Enable the plugin's "Empty .htaccess" option and sync the site.
+2. Enable the plugin option `Empty .htaccess` and sync the site.
 
 Option 2 does not actually delete the .htaccess file but empties it, removing all directives. This effectively renders the file inactive, making its impact equivalent to deletion.
-
-## Note
-If you want to enable the copy function for code snippets, I recommend using the official [Syntax Highlighter plugin](https://marketplace.getpublii.com/plugins/syntax-highlighter/).
 
 ## Disclaimer
 This plugin is an unofficial extension for the [Publii CMS](https://getpublii.com/). I do not assume any responsibility for potential issues or malfunctions that may occur while using this plugin. Additionally, support for this plugin is not guaranteed.
