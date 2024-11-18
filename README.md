@@ -29,6 +29,7 @@ Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. 
 
 ### Redirect 404 
 Force 404 redirects to the `404.html` page. This works only if the theme supports error pages. [Learn more about supported features](https://getpublii.com/dev/theme-supported-features/). 
+
 Here you can specify the absolute path or the subfolder where the 404.html file is located. For example: `/home/mhd-01/mydomain.com`, `/test`, `/home/mhd/www.mydomain.net/htdocs/test`, etc. Default value: empty.
 
 ### Gzip Compression (experimental)  
