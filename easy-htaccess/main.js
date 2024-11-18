@@ -132,10 +132,12 @@ class MyPlugin {
 
 		//Custom 404 Error Page
 		let error404 = ""
+		let subfolder = this.config.path404
+		subfolder = subfolder.replace(/\/$/, '');
 		if (this.config.redirect404) {
 			error404 = 
 			`	# Custom 404 Error Page
-				ErrorDocument 404 /404.html
+				ErrorDocument 404 ${subfolder}/404.html
 
 			`
 		}
