@@ -1,0 +1,263 @@
+{
+    "name": "Easy .htaccess",
+    "description": "An easy .htaccess editor",
+    "license": "GPL-3.0",
+    "author": "Vittorio Ramponi - www.mywebpassion.it",
+    "version": "1.0.0",
+    "scope": "site",
+    "minimumPubliiVersion": "0.42.0",
+    "usePluginSettingsView": false,
+    "useCustomCssForOptions": false,
+    "messageInOptions": {
+        "type": "alert",
+        "text": "This plugin creates an .htaccess file with essential optimizations to enhance site performance. It includes HTTPS and 404 redirections, Gzip file compression, and custom directives. Please note that modifying the .htaccess file is at your own risk; the author assumes no responsibility for malfunctions or data loss. A backup of the original .htaccess file is strongly recommended, as these changes cannot be undone. This feature only works on Apache servers with .htaccess support."
+    },
+    "config": [
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Informations",
+            "note": "This plugin uses directives aimed at maximizing compatibility across different servers. However, compatibility is not guaranteed as the behavior of these directives can vary significantly depending on server configurations, which may differ widely. It's recommended to review and test the generated .htaccess file to ensure it functions as expected on your specific server environment.<br>Deactivating or uninstalling the plugin will not delete the last generated .htaccess file from the server. To remove it, you must delete it manually or enable the plugin option 'Empty .htaccess' and sync the site. More information on the <a href='https://github.com/gpsblues/Publii-Plugin-Easy-Htaccess.git'>GitHub Page</a>.",
+            "size": "thin"
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Output",
+            "note": "",
+            "size": "no-line",
+            "dependencies" :[
+                {
+                    "field": "destroy",
+                    "value": true
+                }   
+            ]
+        },
+        {
+            "name": "output",
+            "label": "File name",
+            "group": "Output",
+            "value": "htaccess.txt",
+            "type": "select",
+            "options": [
+                {
+                    "label": "htaccess.txt",
+                    "value": "htaccess.txt"
+
+                },
+                {
+                    "label": ".htaccess",
+                    "value": ".htaccess"
+                }
+            ],
+            "note": "The default option 'htaccess.txt' creates a plain text file on the server, which will have no effect until it is manually renamed to .htaccess.",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "no-line",
+            "dependencies" :[
+                {
+                    "field": "destroy",
+                    "value": true
+                }   
+            ]
+        },
+        {
+            "name": "rewriteUrl",
+            "label": "Rewrite Url",
+            "group": "Directives",
+            "note": "Enable HTTPS/HTTP redirection and enforce the use of the www/non-www prefix.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "redirect",
+            "label": "Behaviour",
+            "group": "Directives",
+            "value": 1,
+            "type": "select",
+            "options": [
+                {
+                    "label": "Redirect to HTTPS + www",
+                    "value": 1
+                },
+                {
+                    "label": "Redirect to HTTPS + non-www",
+                    "value": 2
+                },
+                {
+                    "label": "Redirect to HTTPS",
+                    "value": 3
+                },
+                {
+                    "label": "Redirect to www",
+                    "value": 4
+                },
+                {
+                    "label": "Redirect to non-www",
+                    "value": 5
+                },
+                {
+                    "label": "Redirect to HTTP + www",
+                    "value": 6
+                },
+                {
+                    "label": "Redirect to HTTP + non-www",
+                    "value": 7
+                },
+                {
+                    "label": "Redirect to HTTP",
+                    "value": 8
+                }
+            ],
+            "note": "",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "rewriteUrl",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "redirect404",
+            "label": "Redirect 404",
+            "group": "Directives",
+            "note": "Force the 404 redirect to the 404.html page. It only works if the theme supports the error page. See <a href='https://getpublii.com/dev/theme-supported-features/'>supported-features</a>.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+
+
+
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "gzip",
+            "label": "Gzip compression",
+            "group": "Directives",
+            "note": "Enable Gzip compression. This feature takes effect only if mod_deflate is enabled on the server.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+
+
+
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "custom",
+            "label": "Custom Directives",
+            "group": "Directives",
+            "note": "Add custom directives manually.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+
+        {
+            "name": "personal",
+            "label": "",
+            "group": "Directives",
+            "value": "",
+            "type": "textarea",
+            "rows": 8,
+            "disabled": false,
+            "note": "Enter your custom directives here. They will be appended to the end of the .htaccess file.",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "custom",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "destroy",
+            "label": "Empty .htaccess",
+            "group": "Remove Directives",
+            "note": "Clears the content of the .htaccess file after synchronization. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
+            "value": false,
+            "type": "checkbox"
+        }
+    ]
+}
