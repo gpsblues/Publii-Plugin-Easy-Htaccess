@@ -21,8 +21,8 @@ This plugin uses directives aimed at maximizing compatibility across different s
 The plugin allows for selecting multiple options. These options will only take effect after synchronizing the site to an Apache server.
 
 ### File Name 
-- `htaccess.txt`  creates a plain text file on the server, which will remain inactive until manually renamed to .htaccess. This is a safe option that allows you to review the file before making it operational.  
-- `.htaccess`  directly creates the .htaccess file, overwriting any previous versions.
+- **`htaccess.txt`**  creates a plain text file on the server, which will remain inactive until manually renamed to .htaccess. This is a safe option that allows you to review the file before making it operational.  
+- **`.htaccess`**  directly creates the .htaccess file, overwriting any previous versions.
 
 ### Rewrite URL 
 Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
@@ -41,13 +41,17 @@ Manually add your custom directives here. These will be appended to the end of t
 ### Empty .htaccess 
 Reset all customizations by creating an empty `.htaccess` file. This option is effectively equivalent to deleting the file.
 
-
 ## Uninstalling
-Since Publii plugins do not work directly on the server and currently cannot delete files, uninstalling or deactivating the plugin will leave the last version of the .htaccess file created by the plugin on the server. If you wish to remove this file, you have two options:  
-1. Manually delete the file directly from the server (the obvious option);  
-2. Enable the plugin option `Empty .htaccess` and sync the site.
+Since Publii plugins do not operate directly on the server and currently cannot delete files, uninstalling or deactivating this plugin will leave the last version of the .htaccess file created by the plugin on the server. If you want to remove this file, you have two options:
 
-Option 2 does not actually delete the .htaccess file but empties it, removing all directives. This effectively renders the file inactive, making its impact equivalent to deletion.
+1. Manually delete the file directly from the server (the obvious choice).
+2. Enable the plugin option **`Empty .htaccess`**  and sync the site.
+
+Option 2 does not actually delete the .htaccess file but empties its contents, removing all directives. This effectively deactivates the file, making its impact equivalent to deletion.
+
+Please note that the plugin also creates a local copy of the file in the site's root directory. You can find this copy as .htaccess or htaccess.txt in **`Publii > File Manager > root directory`**, which you will need to remove manually.
+
+
 
 ## Disclaimer
 This plugin is an unofficial extension for the [Publii CMS](https://getpublii.com/). I do not assume any responsibility for potential issues or malfunctions that may occur while using this plugin. Additionally, support for this plugin is not guaranteed.
