@@ -20,24 +20,24 @@ This plugin uses directives aimed at maximizing compatibility across different s
 ## Settings
 The plugin allows for selecting multiple options. These options will only take effect after synchronizing the site to an Apache server.
 
-**File Name**  
+### File Name 
 - `htaccess.txt` creates a plain text file on the server, which will remain inactive until manually renamed to `.htaccess`. This is a safe option that allows you to review the file before making it operational.  
 - `.htaccess` directly creates the file, overwriting any previous versions.
 
-**Rewrite URL**  
+### Rewrite URL 
 Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
 
-**Redirect 404**  
+### Redirect 404 
 Force 404 redirects to the `404.html` page. This works only if the theme supports error pages. [Learn more about supported features](https://getpublii.com/dev/theme-supported-features/). 
 Here you can specify the absolute path or the subfolder where the 404.html file is located. For example: `/home/mhd-01/mydomain.com`, `/test`, `/home/mhd/www.mydomain.net/htdocs/test`, etc. Default value: empty.
 
-**Gzip Compression**  
+### Gzip Compression (experimental)  
 Enable Gzip compression to reduce file sizes and improve loading times. This feature requires `mod_deflate` to be enabled on the server.
 
-**Custom Directives**  
+### Custom Directives
 Manually add your custom directives here. These will be appended to the end of the `.htaccess` file.
 
-**Empty .htaccess**  
+### Empty .htaccess 
 Reset all customizations by creating an empty `.htaccess` file. This option is effectively equivalent to deleting the file.
 
 
