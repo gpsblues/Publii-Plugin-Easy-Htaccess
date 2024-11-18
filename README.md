@@ -1,2 +1,2 @@
-# Publii-Plugin-Easy-Htaccess
-An easy .htaccess editor for Publii
+# Publii Plugin: Easy .htaccess
+An easy .htaccess editor for Publii.
