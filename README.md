@@ -21,8 +21,8 @@ This plugin uses directives aimed at maximizing compatibility across different s
 The plugin allows for selecting multiple options. These options will only take effect after synchronizing the site to an Apache server.
 
 ### File Name 
-- `htaccess.txt` creates a plain text file on the server, which will remain inactive until manually renamed to `.htaccess`. This is a safe option that allows you to review the file before making it operational.  
-- `.htaccess` directly creates the file, overwriting any previous versions.
+- `htaccess.txt`  creates a plain text file on the server, which will remain inactive until manually renamed to .htaccess. This is a safe option that allows you to review the file before making it operational.  
+- `.htaccess`  directly creates the file, overwriting any previous versions.
 
 ### Rewrite URL 
 Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
