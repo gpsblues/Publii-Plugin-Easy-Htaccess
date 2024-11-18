@@ -22,7 +22,7 @@ The plugin allows for selecting multiple options. These options will only take e
 
 ### File Name 
 - `htaccess.txt`  creates a plain text file on the server, which will remain inactive until manually renamed to .htaccess. This is a safe option that allows you to review the file before making it operational.  
-- `.htaccess`  directly creates the file, overwriting any previous versions.
+- `.htaccess`  directly creates the .htaccess file, overwriting any previous versions.
 
 ### Rewrite URL 
 Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
