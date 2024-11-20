@@ -15,7 +15,7 @@ This plugin uses directives aimed at maximizing compatibility across different s
 - Open Publii CMS and [install the plugin](https://getpublii.com/docs/plugins.html#installingplugins).
 - [Enable the plugin](https://getpublii.com/docs/plugins.html#enablingplugins).
 - Set plugin options by clicking on its name.
-- Save and or Sync your website to see it in action.
+- Save and Sync your website to see it in action.
 
 ## Settings
 The plugin allows for selecting multiple options. These options will only take effect after synchronizing the site to an Apache server.
