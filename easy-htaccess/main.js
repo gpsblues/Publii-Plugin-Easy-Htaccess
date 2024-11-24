@@ -142,6 +142,18 @@ class MyPlugin {
 			`
 		}
 
+		//Protect files.publii.json
+		let protectFileList = ""
+		if (this.config.protectFileList) {
+			protectFileList = 
+			`	# Blocking access files.publii.json
+				<Files "files.publii.json">
+					Require all denied
+				</Files>
+
+			`;
+		}
+
 		//Gzip compression
 		let gzip = ""
 		if (this.config.gzip) {
@@ -154,6 +166,7 @@ class MyPlugin {
 					AddOutputFilterByType DEFLATE application/font-woff2 application/font-woff application/font-ttf
 					AddOutputFilterByType DEFLATE image/svg+xml
 				</IfModule>
+				
 			`
 		}
 
@@ -166,7 +179,7 @@ class MyPlugin {
 			`
 		}
 
-		content = rewriteUrl + error404 + gzip + custom
+		content = rewriteUrl + error404 + protectFileList + gzip + custom 
 		content = content
 			.replace(/[ \t]+/g, ' ')    // Removes double spaces and tabs, replacing them with a single space
 			.replace(/^[ \t]+/gm, '')   // Removes spaces and tabs at the beginning of each line

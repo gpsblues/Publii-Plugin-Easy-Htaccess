@@ -3,7 +3,7 @@
     "description": "An easy .htaccess editor",
     "license": "GPL-3.0",
     "author": "Vittorio Ramponi - www.mywebpassion.it",
-    "version": "0.0.1",
+    "version": "0.0.2", 
     "scope": "site",
     "minimumPubliiVersion": "0.42.0",
     "usePluginSettingsView": false,
@@ -172,7 +172,7 @@
             "name": "path404",
             "label": "Path",
             "group": "Directives",
-            "note": "If your site is hosted in a subfolder of the server, specify the path here, e.g., <strong>/test<strong> if the site is located at <strong>www.mydomain.net/test</strong>. In some cases, you might need to provide the absolute server path, such as: /home/mhd/www.mydomain.net/htdocs/test. Default: empty.",
+            "note": "If your site is hosted in a subfolder of the server, specify the path here, e.g., <strong>/test<strong> if the site is located at <strong>www.mydomain.net/test</strong>.<br>In some cases, you might need to provide the absolute server path, such as: /home/mhd/www.mydomain.net/htdocs/test. Default: empty.",
             "value": "",
             "type": "test",
             "dependencies": [
@@ -186,8 +186,34 @@
                 }
             ]
         },
-
-
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "protectFileList",
+            "label": "Protect files.publii.json",
+            "group": "Directives",
+            "note": "Blocking access to files.publii.json. <a href='https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile'>More information</a>.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
         {
             "name": "separator",
             "type": "separator",
@@ -256,7 +282,7 @@
             "type": "textarea",
             "rows": 8,
             "disabled": false,
-            "note": "Enter your custom directives here. They will be appended to the end of the .htaccess file.",
+            "note": "Enter your custom directives here. They will be appended to the end of the .htaccess or htaccess.txt file.",
             "dependencies": [
                 {
                     "field": "destroy",
@@ -272,7 +298,7 @@
             "name": "destroy",
             "label": "Empty .htaccess",
             "group": "Remove Directives",
-            "note": "Clears the content of the .htaccess file after synchronization. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
+            "note": "Clears the content of the <strong>.htaccess</strong> file after synchronization. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
             "value": false,
             "type": "checkbox"
         }
