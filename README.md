@@ -32,6 +32,9 @@ Force 404 redirects to the `404.html` page. This works only if the theme support
 
 Here you can specify the absolute path or the subfolder where the 404.html file is located. For example: `/home/mhd-01/mydomain.com`, `/test`, `/home/mhd/www.mydomain.net/htdocs/test`, etc. Default value: empty.
 
+### Protecting the files.publii.json File
+With this option, you can make the `files.publii.json` file unreachable from the outside. [More information](https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile).
+
 ### Gzip Compression (experimental)  
 Enable Gzip compression to reduce file sizes and improve loading times. This feature requires `mod_deflate` to be enabled on the server.
 
