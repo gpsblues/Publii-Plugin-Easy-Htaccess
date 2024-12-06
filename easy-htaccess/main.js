@@ -38,27 +38,28 @@ class MyPlugin {
 			switch (this.config.redirect) {
 				case '1':
 					rewriteUrl += 
-					`	# Redirect everything to https + www
+					`	# Redirect to HTTPS + WWW #
 						RewriteCond %{HTTPS} off [OR]
-						RewriteCond %{HTTP_HOST} !^www\. [NC]
-						RewriteRule ^ https://www.%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
+						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+						RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
 
 					`;
 					break;
 			
 				case '2':
 					rewriteUrl += 
-					`	# Redirect everything to https + no-www
+					`	# Redirect to HTTPS + no-WWW #
 						RewriteCond %{HTTPS} off [OR]
 						RewriteCond %{HTTP_HOST} ^www\. [NC]
-						RewriteRule ^ https://%{HTTP_HOST}:%{SERVER_PORT}/%{REQUEST_URI} [L,R=301,NE]
+						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+						RewriteRule ^ https://%1%{REQUEST_URI} [L,NE,R=301]
 
 					`;
 					break;
 			
 				case '3':
 					rewriteUrl += 
-					`	# Redirect everything to https (no preference for www or no-www)
+					`	# Redirect to HTTPS (no preference for www or no-www) #
 						RewriteCond %{HTTPS} off
 						RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
@@ -67,53 +68,66 @@ class MyPlugin {
 			
 				case '4':
 					rewriteUrl += 
-					`	# Redirect everything to www (preserve protocol)
-						RewriteCond %{HTTP_HOST} !^www\. [NC]
+					`	# Redirect no-WWW to WWW, preserving protocol #
+						# Force www preserving HTTPS
 						RewriteCond %{HTTPS} on
-						RewriteRule ^ https://www.%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
 						RewriteCond %{HTTP_HOST} !^www\. [NC]
+						RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+						# Force www preserving HTTP
 						RewriteCond %{HTTPS} off
-						RewriteRule ^ http://www.%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
+						RewriteCond %{HTTP_HOST} !^www\. [NC]
+						RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
 					`;
 					break;
 			
 				case '5':
 					rewriteUrl += 
-					`	# Redirect everything to no-www (preserve protocol)
-						RewriteCond %{HTTP_HOST} ^www\. [NC]
+					`	# Redirect WWW to non-WWW, preserving protocol
+						# Force no-www preserving HTTPS
 						RewriteCond %{HTTPS} on
-						RewriteRule ^ https://%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
-						RewriteCond %{HTTP_HOST} ^www\. [NC]
+						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+						RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+						# Force no-www preserving HTTP
 						RewriteCond %{HTTPS} off
-						RewriteRule ^ http://%{HTTP_HOST}/%{REQUEST_URI} [L,R=301]
+						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+						RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
 					`;
 					break;
 			
 				case '6':
 					rewriteUrl += 
-					`	# Redirect everything to http + www
-						RewriteCond %{HTTPS} on [OR]
-						RewriteCond %{HTTP_HOST} !^www\. [NC]
-						RewriteRule ^ http://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+					`	# Redirect to HTTP + WWW #
+						RewriteCond %{HTTPS} off [OR]
+						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+						RewriteRule ^ http://www.%1%{REQUEST_URI} [L,R=301]
 
 					`;
 					break;
 			
 				case '7':
 					rewriteUrl += 
-					`	# Redirect everything to http + no-www
-						RewriteCond %{HTTPS} on [OR]
-						RewriteCond %{HTTP_HOST} ^www\. [NC]
-						RewriteRule ^ http://%{HTTP_HOST:4}%{REQUEST_URI} [L,R=301]
+					`	# Redirect to HTTP + no-WWW #
+						# Force HTTP without www when the protocol is HTTPS and the host contains www
+						RewriteCond %{HTTPS} on
+						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+						RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
+						# Force HTTP without www when the protocol is already HTTP (ensure no www)
+						RewriteCond %{HTTPS} off
+						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+						RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
+						# Redirect HTTPS without www to HTTP without www
+						RewriteCond %{HTTPS} on
+						RewriteCond %{HTTP_HOST} ^miosito\.it$ [NC]
+						RewriteRule ^ http://miosito.it%{REQUEST_URI} [L,NE,R=301]
 
 					`;
 					break;
 			
 				case '8':
 					rewriteUrl += 
-					`	# Redirect everything to http (no preference for www or no-www)
+					`	# Redirect to HTTP (no preference for www or no-www) #
 						RewriteCond %{HTTPS} on
 						RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 

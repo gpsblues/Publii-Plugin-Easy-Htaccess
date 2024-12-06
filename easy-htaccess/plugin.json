@@ -100,19 +100,19 @@
                     "value": 1
                 },
                 {
-                    "label": "Redirect to HTTPS + non-www",
+                    "label": "Redirect to HTTPS + no-www",
                     "value": 2
                 },
                 {
-                    "label": "Redirect to HTTPS",
+                    "label": "Redirect to HTTPS (preserving www / no-www)",
                     "value": 3
                 },
                 {
-                    "label": "Redirect to www",
+                    "label": "Redirect to www (preserving protocol)",
                     "value": 4
                 },
                 {
-                    "label": "Redirect to non-www",
+                    "label": "Redirect to no-www (preserving protocol)",
                     "value": 5
                 },
                 {
@@ -120,11 +120,11 @@
                     "value": 6
                 },
                 {
-                    "label": "Redirect to HTTP + non-www",
+                    "label": "Redirect to HTTP + no-www",
                     "value": 7
                 },
                 {
-                    "label": "Redirect to HTTP",
+                    "label": "Redirect to HTTP (preserving www / no-www)",
                     "value": 8
                 }
             ],
@@ -172,7 +172,7 @@
             "name": "path404",
             "label": "Path",
             "group": "Directives",
-            "note": "If your site is hosted in a subfolder of the server, specify the path here, e.g., <strong>/test<strong> if the site is located at <strong>www.mydomain.net/test</strong>.<br>In some cases, you might need to provide the absolute server path, such as: /home/mhd/www.mydomain.net/htdocs/test. Default: empty.",
+            "note": "If your site is hosted in a subfolder of the server, specify the path here, e.g., <strong>/test</strong> if the site is located at <strong>www.mydomain.net/test</strong>.<br>In some cases, you might need to provide the absolute server path, such as: /home/mhd/www.mydomain.net/htdocs/test.<br>Default: empty.",
             "value": "",
             "type": "test",
             "dependencies": [
@@ -242,8 +242,6 @@
                 }
             ]
         },
-
-
 
         {
             "name": "separator",
