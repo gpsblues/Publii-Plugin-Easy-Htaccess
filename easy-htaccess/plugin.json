@@ -3,7 +3,7 @@
     "description": "An easy .htaccess editor",
     "license": "GPL-3.0",
     "author": "Vittorio Ramponi - www.mywebpassion.it",
-    "version": "0.0.2", 
+    "version": "0.0.3", 
     "scope": "site",
     "minimumPubliiVersion": "0.42.0",
     "usePluginSettingsView": false,
