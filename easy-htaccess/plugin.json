@@ -261,7 +261,7 @@
             "name": "path404",
             "label": " subfolder path",
             "group": "Directives",
-            "note": "Leave empty if the site is locate in the root directory.<br>For example: <span class='mark'>/subfolder</span> if the site is located at <strong>www.mydomain.net/subfolder</strong>.<br>In some cases you might need to provide the absolute server path or <span class='mark'>/</span>.<br>If unsure, check your site’s structure or contact your hosting provider for guidance.",
+            "note": "Leave empty if the site is locate in the root directory.<br>For example: <span class='mark'>/subfolder</span> if the site is located at <strong>www.mydomain.net/subfolder</strong>.<br>In some cases you might need to provide the absolute server path or the host URL.<br>If unsure, check your site’s structure or contact your hosting provider for guidance.",
             "value": "",
             "type": "test",
             "dependencies": [

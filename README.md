@@ -35,7 +35,7 @@ This option uses simple redirects (technically mod_alias), so patterns and regul
 ### Redirect 404 
 Force 404 redirects to the `404.html` page. This works only if the theme supports error pages. [Learn more about supported features](https://getpublii.com/dev/theme-supported-features/).  
 
-You can specify either the absolute server path or the subfolder where the `404.html` file is located. For example: `/home/mhd-01/mydomain.com`, `/test`. Default value: empty.
+You can specify either the absolute server path or the host URL or the subfolder where the `404.html` file is located. For example: `/home/mhd-01/mydomain.com`, `/https://www.mydomain.com`, `/test`. Default value: empty.
 
 ### Protecting the files.publii.json File
 With this option, you can make the `files.publii.json` file unreachable from the outside. [More information](https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile).
