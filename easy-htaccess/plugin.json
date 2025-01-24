@@ -3,7 +3,7 @@
     "description": "A simple and user-friendly plugin to create and manage .htaccess files with essential optimizations for your website.",
     "license": "GPL-3.0",
     "author": "Vittorio Ramponi - www.mywebpassion.it",
-    "version": "0.1.0", 
+    "version": "0.1.0-beta", 
     "scope": "site",
     "minimumPubliiVersion": "0.42.0",
     "usePluginSettingsView": false,

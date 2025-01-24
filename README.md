@@ -1,5 +1,5 @@
 # Publii Plugin: Easy .htaccess
-An easy .htaccess editor for Publii.
+A simple and user-friendly plugin to create and manage .htaccess files with essential optimizations for your website.
 
 <p><img height="100" alt="publii plugin" title="Plugin icons" src="https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/802bbe1ad69aafd209050b19b37371a913fe547f/.assets/thumbnail.svg"></p>
 
