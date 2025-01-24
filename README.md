@@ -24,19 +24,24 @@ The plugin allows for selecting multiple options. These options will only take e
 - **`htaccess.txt`**  creates a plain text file on the server, which will remain inactive until manually renamed to .htaccess. This is a safe option that allows you to review the file before making it operational.  
 - **`.htaccess`**  directly creates the .htaccess file, overwriting any previous versions.
 
-### Rewrite URL 
+### Canonical URL redirect 
 Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
 
-### Redirect 404 
-Force 404 redirects to the `404.html` page. This works only if the theme supports error pages. [Learn more about supported features](https://getpublii.com/dev/theme-supported-features/). 
+### Redirect URLs
+Set up URL redirects directly in the `.htaccess` file by specifying old and new paths. Choose between permanent (301) or temporary (302) redirects. These rules help maintain SEO rankings and prevent broken links.  
 
-Here you can specify the absolute path or the subfolder where the 404.html file is located. For example: `/home/mhd-01/mydomain.com`, `/test`, `/home/mhd/www.mydomain.net/htdocs/test`, etc. Default value: empty.
+This option uses simple redirects (technically mod_alias), so patterns and regular expressions are not supported.  
+
+### Redirect 404 
+Force 404 redirects to the `404.html` page. This works only if the theme supports error pages. [Learn more about supported features](https://getpublii.com/dev/theme-supported-features/).  
+
+You can specify either the absolute server path or the subfolder where the `404.html` file is located. For example: `/home/mhd-01/mydomain.com`, `/test`. Default value: empty.
 
 ### Protecting the files.publii.json File
 With this option, you can make the `files.publii.json` file unreachable from the outside. [More information](https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile).
 
 ### Gzip Compression (experimental)  
-Enable Gzip compression to reduce file sizes and improve loading times. This feature requires `mod_deflate` to be enabled on the server.
+Enable Gzip compression to improve site performance by reducing file sizes. This option works only if the server supports Gzip. If you're unsure, contact your hosting provider for more information.
 
 ### Custom Directives
 Manually add your custom directives here. These will be appended to the end of the `.htaccess` file.
@@ -45,16 +50,13 @@ Manually add your custom directives here. These will be appended to the end of t
 Reset all customizations by creating an empty `.htaccess` file. This option is effectively equivalent to deleting the file.
 
 ## Uninstalling
-Since Publii plugins do not operate directly on the server and currently cannot delete files, uninstalling or deactivating this plugin will leave the last version of the .htaccess file created by the plugin on the server. If you want to remove this file, you have two options:
+Uninstalling or deactivating this plugin will not remove the `.htaccess` file created on the server. If you want to remove it, you have two options:
 
-1. Manually delete the file directly from the server (the obvious choice).
-2. Enable the plugin option **`Empty .htaccess`**  and sync the site.
+- **Enable the plugin option `Empty .htaccess` and sync the site.**  
+  This option does not delete the `.htaccess` file but empties its contents, removing all directives. This effectively deactivates the file, making its impact equivalent to deletion.
 
-Option 2 does not actually delete the .htaccess file but empties its contents, removing all directives. This effectively deactivates the file, making its impact equivalent to deletion.
-
-Please note that the plugin also creates a local copy of the file in the site's root directory. You can find this copy as .htaccess or htaccess.txt in **`Publii > File Manager > root directory`**, which you will need to remove manually.
-
-
+- **Deactivate the plugin and manually delete the files.**  
+  You will need to remove two `.htaccess` files: the one located on the server and the local copy found in **`Publii > File Manager > root directory`**.
 
 ## Disclaimer
 This plugin is an unofficial extension for the [Publii CMS](https://getpublii.com/). I do not assume any responsibility for potential issues or malfunctions that may occur while using this plugin. Additionally, support for this plugin is not guaranteed.

@@ -1,6 +1,6 @@
 // https://github.com/GetPublii/Publii/discussions/1359
 
-class MyPlugin {
+class EasyHtaccess {
     constructor (API, name, config) {
         this.API = API; 		// gives you an access to the plugins API functions
 		this.name = name; 		// retrieved plugin name - probably will be removed in the future
@@ -28,7 +28,7 @@ class MyPlugin {
 			return
 		}
 
-		//Rewrite URL
+		//Canonical URL redirect
 		let rewriteUrl = ''
 		if (this.config.rewriteUrl) {
 			rewriteUrl = 
@@ -144,6 +144,22 @@ class MyPlugin {
 				
 		}
 
+		//Rewrite SEO Urls
+		let redirectSeo = ""
+		if (this.config.redirectSeo) {
+			let urls = []	// Initialize the array to store redirect strings
+			if (Array.isArray(this.config.repeaterUrlList)) {
+				this.config.repeaterUrlList.forEach((elements) => {
+					const redirect = `Redirect ${elements.type} ${elements.oldUrl} ${elements.newUrl}` 
+					urls.push(redirect) // Add the redirect string to the array
+				});
+				// Build the final redirectSeo string with custom text before and after
+				redirectSeo = "	# Redirect URLs\n"
+				redirectSeo += urls.join("\n"); // Combine all redirect strings with newline
+				redirectSeo += "\n\n";
+			}
+		}
+
 		//Custom 404 Error Page
 		let error404 = ""
 		let subfolder = this.config.path404
@@ -193,7 +209,8 @@ class MyPlugin {
 			`
 		}
 
-		content = rewriteUrl + error404 + protectFileList + gzip + custom 
+		//Write directives in appropriate order
+		content = gzip + rewriteUrl + redirectSeo + error404 + protectFileList + custom 
 		content = content
 			.replace(/[ \t]+/g, ' ')    // Removes double spaces and tabs, replacing them with a single space
 			.replace(/^[ \t]+/gm, '')   // Removes spaces and tabs at the beginning of each line
@@ -206,5 +223,4 @@ class MyPlugin {
 	
 }
 
-
-module.exports = MyPlugin;
+module.exports = EasyHtaccess;

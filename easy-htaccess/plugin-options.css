@@ -1,0 +1,14 @@
+/*
+This file customizes the plugin's style within the CMS Publii.
+It is activated by setting "useCustomCssForOptions": true in plugin.json
+*/
+
+span.mark {
+    font-weight:600;
+    background-color: rgb(240, 240, 240);
+    padding: 0 5px;
+    border-radius: 3px;
+}
+input[type="text"] {
+    height:4.8rem;
+}

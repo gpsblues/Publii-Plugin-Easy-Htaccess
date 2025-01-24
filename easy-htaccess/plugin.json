@@ -1,16 +1,16 @@
 {
     "name": "Easy .htaccess",
-    "description": "An easy .htaccess editor",
+    "description": "A simple and user-friendly plugin to create and manage .htaccess files with essential optimizations for your website.",
     "license": "GPL-3.0",
     "author": "Vittorio Ramponi - www.mywebpassion.it",
-    "version": "0.0.3", 
+    "version": "0.1.0", 
     "scope": "site",
     "minimumPubliiVersion": "0.42.0",
     "usePluginSettingsView": false,
-    "useCustomCssForOptions": false,
+    "useCustomCssForOptions": true,
     "messageInOptions": {
         "type": "alert",
-        "text": "This plugin creates an .htaccess file with essential optimizations to enhance site performance. It includes HTTPS and 404 redirections, Gzip file compression, and custom directives. Please note that modifying the .htaccess file is at your own risk; the author assumes no responsibility for malfunctions or data loss. A backup of the original .htaccess file is strongly recommended, as these changes cannot be undone. This feature only works on Apache servers with .htaccess support."
+        "text": "This plugin is designed for Apache servers and generates an .htaccess file to optimize site performance, including HTTPS redirection, SEO redirects, custom error pages, and Gzip compression. Be cautious when editing the file, as errors may cause issues. Always back up the original .htaccess file beforehand. Use at your own risk. The plugin author cannot be held responsible for data loss or site malfunctions."
     },
     "config": [
         {
@@ -18,8 +18,8 @@
             "type": "separator",
             "label": "",
             "group": "Informations",
-            "note": "This plugin uses directives aimed at maximizing compatibility across different servers. However, compatibility is not guaranteed as the behavior of these directives can vary significantly depending on server configurations, which may differ widely. It's recommended to review and test the generated .htaccess file to ensure it functions as expected on your specific server environment.<br>Deactivating or uninstalling the plugin will not delete the last generated .htaccess file from the server. To remove it, you must delete it manually or enable the plugin option 'Empty .htaccess' and sync the site. More information on the <a href='https://github.com/gpsblues'>GitHub Page</a>.",
-            "size": "thin"
+            "note": "This plugin uses directives designed for broad compatibility, but server behavior may vary. Test the generated .htaccess file to ensure it works on your server.<br>Deactivating or uninstalling the plugin won't delete the last .htaccess file; remove it manually or use the 'Empty .htaccess' option and sync the site. Learn more on the <a href='https://github.com/gpsblues?tab=repositories'>GitHub Page</a>.",
+            "size": "no-line"
         },
         {
             "name": "separator",
@@ -52,7 +52,7 @@
                     "value": ".htaccess"
                 }
             ],
-            "note": "The default option 'htaccess.txt' creates a plain text file on the server, which will have no effect until it is manually renamed to .htaccess.",
+            "note": "Select <span class='mark'>htaccess.txt</span> for testing. This file will take effect only if renamed.<br>Select <span class='mark'>.htaccess</span> for production. Synchronizing will overwrite previous versions.",
             "dependencies": [
                 {
                     "field": "destroy",
@@ -76,9 +76,9 @@
         },
         {
             "name": "rewriteUrl",
-            "label": "Rewrite Url",
+            "label": "Canonical URL Redirect",
             "group": "Directives",
-            "note": "Enable HTTPS/HTTP redirection and enforce the use of the www/non-www prefix.",
+            "note": "Enable URL redirection to enforce HTTPS/HTTP protocols and apply your preferred www or non-www prefix.",
             "value": false,
             "type": "checkbox",
             "dependencies": [
@@ -155,10 +155,99 @@
             ]
         },
         {
+            "name": "redirectSeo",
+            "label": "Redirect URLs",
+            "group": "Directives",
+            "note": "Create custom redirects from old URLs to new ones to improve user experience and maintain SEO.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "repeaterUrlList",
+            "label": "  ",
+            "group": "Directives",
+            "note": "Enter the old URL, the new URL, and the redirect type (301 = permanent). Regular expressions are not supported.",
+            "value": [],
+            "type": "repeater",
+            "translations": {
+                "addItem": "Add redirect",
+                "duplicateItem": "Duplicate",
+                "emptyState": "",
+                "removeItem": "Remove"
+            },
+            "hasEmptyState": false,
+            "hideLabels": true,
+            "structure": [
+                {
+                    "name": "oldUrl",
+                    "label": "Old URL",
+                    "type": "text",
+                    "placeholder": "eg. /old-url.html",
+                    "value": "",
+                    "width": 40
+                },
+                {
+                    "name": "newUrl",
+                    "label": "New URL",
+                    "type": "text",
+                    "placeholder": "eg. /new-url.html",
+                    "value": "",
+                    "width": 40
+                },
+                {
+                    "name": "type",
+                    "label": "Type",
+                    "type": "dropdown",
+                    "value": "301",
+                    "width": 20,
+                    "options": [
+                        {
+                            "label":"301",
+                            "value":"301"
+                        },
+                        {
+                            "label":"302",
+                            "value":"302"
+                        }
+                    ]
+                }
+            ],
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "redirectSeo",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
             "name": "redirect404",
             "label": "Redirect 404",
             "group": "Directives",
-            "note": "Force the 404 redirect to the 404.html page. It only works if the theme supports the error page. See <a href='https://getpublii.com/dev/theme-supported-features/'>supported-features</a>.",
+            "note": "Force the 404 redirect to the 404.html page. It only works if the theme supports the error page. <a href='https://getpublii.com/dev/theme-supported-features/'>Learn more</a>",
             "value": false,
             "type": "checkbox",
             "dependencies": [
@@ -170,9 +259,9 @@
         },
         {
             "name": "path404",
-            "label": "Path",
+            "label": " subfolder path",
             "group": "Directives",
-            "note": "If your site is hosted in a subfolder of the server, specify the path here, e.g., <strong>/test</strong> if the site is located at <strong>www.mydomain.net/test</strong>.<br>In some cases, you might need to provide the absolute server path, such as: /home/mhd/www.mydomain.net/htdocs/test.<br>Default: empty.",
+            "note": "Leave empty if the site is locate in the root directory.<br>For example: <span class='mark'>/subfolder</span> if the site is located at <strong>www.mydomain.net/subfolder</strong>.<br>In some cases you might need to provide the absolute server path or <span class='mark'>/</span>.<br>If unsure, check your site’s structure or contact your hosting provider for guidance.",
             "value": "",
             "type": "test",
             "dependencies": [
@@ -204,7 +293,7 @@
             "name": "protectFileList",
             "label": "Protect files.publii.json",
             "group": "Directives",
-            "note": "Blocking access to files.publii.json. <a href='https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile'>More information</a>.",
+            "note": "Prevents unauthorized access to the files.publii.json file for enhanced security. <a href='https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile'>Learn more</a>.",
             "value": false,
             "type": "checkbox",
             "dependencies": [
@@ -232,7 +321,7 @@
             "name": "gzip",
             "label": "Gzip compression",
             "group": "Directives",
-            "note": "Enable Gzip compression. This feature takes effect only if mod_deflate is enabled on the server.",
+            "note": "Enable Gzip compression to improve site performance by reducing file sizes. This option works only if the server supports Gzip. If you're unsure, contact your hosting provider for more information.",
             "value": false,
             "type": "checkbox",
             "dependencies": [
@@ -242,7 +331,6 @@
                 }
             ]
         },
-
         {
             "name": "separator",
             "type": "separator",
@@ -261,7 +349,7 @@
             "name": "custom",
             "label": "Custom Directives",
             "group": "Directives",
-            "note": "Add custom directives manually.",
+            "note": "Add custom .htaccess directives for specific needs. Ensure directives are properly tested to avoid server misconfigurations.",
             "value": false,
             "type": "checkbox",
             "dependencies": [
@@ -271,7 +359,6 @@
                 }
             ]
         },
-
         {
             "name": "personal",
             "label": "",
@@ -280,7 +367,7 @@
             "type": "textarea",
             "rows": 8,
             "disabled": false,
-            "note": "Enter your custom directives here. They will be appended to the end of the .htaccess or htaccess.txt file.",
+            "note": "Directives will be appended to the end of the .htaccess or htaccess.txt file.",
             "dependencies": [
                 {
                     "field": "destroy",
@@ -296,7 +383,7 @@
             "name": "destroy",
             "label": "Empty .htaccess",
             "group": "Remove Directives",
-            "note": "Clears the content of the <strong>.htaccess</strong> file after synchronization. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
+            "note": "Clears the content of the .htaccess file <strong>after synchronization</strong>. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
             "value": false,
             "type": "checkbox"
         }
