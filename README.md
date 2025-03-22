@@ -10,6 +10,8 @@ This plugin creates an **.htaccess** file with essential optimizations to enhanc
 
 This plugin uses directives aimed at maximizing compatibility across different servers. However, compatibility is not guaranteed as the behavior of these directives can vary significantly depending on server configurations, which may differ widely. It's recommended to review and test the generated .htaccess file to ensure it functions as expected on your specific server environment.
 
+If you use this plugin, consider giving it a ⭐ on GitHub: it's the only way for me to know if this work is appreciated. Thank you!
+
 ## Installation and Usage
 - Download the .zip file of the latest plugin version from the [release page](https://github.com/gpsblues/Publii-Plugin-Easy-Htaccess/releases/).
 - Open Publii CMS and [install the plugin](https://getpublii.com/docs/plugins.html#installingplugins).
