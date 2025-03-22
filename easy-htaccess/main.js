@@ -1,226 +1,319 @@
-// https://github.com/GetPublii/Publii/discussions/1359
-
 class EasyHtaccess {
-    constructor (API, name, config) {
-        this.API = API; 		// gives you an access to the plugins API functions
-		this.name = name; 		// retrieved plugin name - probably will be removed in the future
-		this.config = config; 	// gives access to the plugin saved config
-    }	
-
-	
-	// Events - can be used to do some additional actions in specific moments of the website rendering process.
-    addEvents () {
-		this.API.addEvent('beforeRender', this.addFile, 1, this);
+    constructor(API, name, config) {
+        this.API = API;
+        this.name = name;
+        this.config = config || {};
     }
 
-    // Custom code below
-    
-	
-    addFile (rendererInstance) {	
+    addEvents() {
+        this.API.addEvent('beforeRender', this.addFile, 1, this);
+    }
 
-		//Output file name
-		let output = this.config.output
-		let content = ""
+    addFile(rendererInstance) {
+        if (this.config.destroy) {
+            this.createHtaccessFile("## Empty file (Removes Directives = true)");
+            return;
+        }
 
-		//Create empty .htaccess
-		if (this.config.destroy) {
-			this.API.createFile(`[ROOT-FILES]/${output}`, content, this);
-			return
-		}
+        // Array con tutte le sezioni
+        const sections = [
+            this.generateGzip(),                                    // Compressione
+            this.generateExpiresHeaders(rendererInstance),          // Expires Headers
+            this.generateRedirects(),                               // Redirects
+            this.generateSeoRedirects(),                            // SEO Redirects
+            this.generate404(),                                     // Pagina 404 personalizzata
+            this.generateFileProtection(),                          // Protezione dei file
+            this.generateCustomDirectives()                         // Direttive personalizzate
+        ]
+        .filter(Boolean)    //rimuove le sezioni "falsy" ('', null, undefined, 0, ecc.)
+        .join('\n\n');      //converte l'array in una stringa separando le sezioni da due righe vuote     
 
-		//Canonical URL redirect
-		let rewriteUrl = ''
-		if (this.config.rewriteUrl) {
-			rewriteUrl = 
-			`	RewriteEngine On
+        //formatta il contenuto del file
+        this.createHtaccessFile(this.cleanFinalContent(sections));
+    }
 
-			`
-			switch (this.config.redirect) {
-				case '1':
-					rewriteUrl += 
-					`	# Redirect to HTTPS + WWW #
-						RewriteCond %{HTTPS} off [OR]
-						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-						RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
+    cleanFinalContent(content) {
+        return content
+            .replace(/^[ \t]+/gm, '')       // Rimuove le indentazioni
+            .replace(/\n{3,}/g, '\n\n')     // Riduce righe vuote multiple
+            .trim();
+    }
 
-					`;
-					break;
-			
-				case '2':
-					rewriteUrl += 
-					`	# Redirect to HTTPS + no-WWW #
-						RewriteCond %{HTTPS} off [OR]
-						RewriteCond %{HTTP_HOST} ^www\. [NC]
-						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-						RewriteRule ^ https://%1%{REQUEST_URI} [L,NE,R=301]
+    generateGzip() {
+        if (!this.config.gzip) return "";  // Empty string se 'Gzip compression' è disabilitato
+        return `
+            ## Enable Gzip compression
+            <IfModule mod_deflate.c>
+                AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+                AddOutputFilterByType DEFLATE text/javascript application/javascript application/json
+                AddOutputFilterByType DEFLATE application/x-javascript application/xml application/xml+rss
+                AddOutputFilterByType DEFLATE application/font-woff2 application/font-woff application/font-ttf
+                AddOutputFilterByType DEFLATE image/svg+xml
+            </IfModule>
+        `.trim().replace(/^\s+/gm, '');
+    }
 
-					`;
-					break;
-			
-				case '3':
-					rewriteUrl += 
-					`	# Redirect to HTTPS (no preference for www or no-www) #
-						RewriteCond %{HTTPS} off
-						RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    generateExpiresHeaders(rendererInstance){
+        if (!this.config.expires) return ""; // Empty string se 'Expires headers' è disabilitato
+        //sezione da costruire
 
-					`;
-					break;
-			
-				case '4':
-					rewriteUrl += 
-					`	# Redirect no-WWW to WWW, preserving protocol #
-						# Force www preserving HTTPS
-						RewriteCond %{HTTPS} on
-						RewriteCond %{HTTP_HOST} !^www\. [NC]
-						RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
-						# Force www preserving HTTP
-						RewriteCond %{HTTPS} off
-						RewriteCond %{HTTP_HOST} !^www\. [NC]
-						RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+        // determino il gersioning
+        const versioning = rendererInstance.siteConfig.advanced.versionSuffix || false
 
-					`;
-					break;
-			
-				case '5':
-					rewriteUrl += 
-					`	# Redirect WWW to non-WWW, preserving protocol
-						# Force no-www preserving HTTPS
-						RewriteCond %{HTTPS} on
-						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-						RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
-						# Force no-www preserving HTTP
-						RewriteCond %{HTTPS} off
-						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-						RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+        const chacheProfile = this.config.cache || "0";
+        //Oggetto JS che contiene opzione-cache, si richiama con optimisation[n]
+        const optimisation = {
+            "0": `
+              ## Cache disabled
+              <IfModule mod_expires.c>
+                ExpiresActive Off
+              </IfModule>
+              <IfModule mod_headers.c>
+                # Disable cache for all resources
+                Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+                Header set Pragma "no-cache"
+                Header set Expires "0"
+              </IfModule>
+            `,
+          
+            "1": `
+              ## Cache optimisation for Frequent Updates
+              <IfModule mod_expires.c>
+                ExpiresActive On
+                ExpiresDefault "access plus 1 week"
+                # Images (medium cache)
+                ExpiresByType image/jpeg "access plus 6 months"
+                ExpiresByType image/png "access plus 6 months"
+                ExpiresByType image/webp "access plus 6 months"
+                ExpiresByType image/svg+xml "access plus 6 months"
+                ExpiresByType image/x-icon "access plus 6 months"
+                # CSS/JS (long cache with versioning, otherwise short)
+                ExpiresByType text/css "access plus 1 year"
+                ExpiresByType application/javascript "access plus 1 year"
+                # Dynamic content (short cache)
+                ExpiresByType text/html "access plus 2 hours"
+                ExpiresByType application/rss+xml "access plus 1 hour"
+              </IfModule>
+              ${versioning ? `
+              <IfModule mod_headers.c>
+                # Force "immutable" cache for versioned files
+                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
+                  Header set Cache-Control "max-age=31536000, immutable"
+                </FilesMatch>
+              </IfModule>
+              ` : `
+              <IfModule mod_headers.c>
+                # Standard cache for non-versioned files
+                <FilesMatch "\.(css|js)$">
+                  Header set Cache-Control "max-age=86400" # 1 day
+                </FilesMatch>
+              </IfModule>
+              `}
+            `,
+          
+            "2": `
+              ## Cache optimisation for Balanced Performance
+              <IfModule mod_expires.c>
+                ExpiresActive On
+                ExpiresDefault "access plus 1 month"
+                # Images (long cache)
+                ExpiresByType image/jpeg "access plus 1 year"
+                ExpiresByType image/png "access plus 1 year"
+                ExpiresByType image/webp "access plus 1 year"
+                ExpiresByType image/svg+xml "access plus 1 year"
+                ExpiresByType image/x-icon "access plus 1 year"
+                # CSS/JS (long cache with versioning, otherwise medium)
+                ExpiresByType text/css "access plus 1 year"
+                ExpiresByType application/javascript "access plus 1 year"
+                # Dynamic content (medium cache)
+                ExpiresByType text/html "access plus 1 day"
+                ExpiresByType application/pdf "access plus 1 month"
+              </IfModule>
+              ${versioning ? `
+              <IfModule mod_headers.c>
+                # Force "immutable" cache for versioned files
+                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
+                  Header set Cache-Control "max-age=31536000, immutable"
+                </FilesMatch>
+              </IfModule>
+              ` : `
+              <IfModule mod_headers.c>
+                # Standard cache for non-versioned files
+                <FilesMatch "\.(css|js)$">
+                  Header set Cache-Control "max-age=604800" # 1 week
+                </FilesMatch>
+              </IfModule>
+              `}
+            `,
+          
+            "3": `
+              ## Cache optimisation for Maximum Speed
+              <IfModule mod_expires.c>
+                ExpiresActive On
+                ExpiresDefault "access plus 1 year"
+                # Images (maximum cache)
+                ExpiresByType image/jpeg "access plus 2 years"
+                ExpiresByType image/png "access plus 2 years"
+                ExpiresByType image/webp "access plus 2 years"
+                ExpiresByType image/svg+xml "access plus 2 years"
+                ExpiresByType image/x-icon "access plus 2 years"
+                # CSS/JS (maximum cache with versioning, otherwise not applicable)
+                ExpiresByType text/css "access plus 2 years"
+                ExpiresByType application/javascript "access plus 2 years"
+                # Dynamic content (short cache)
+                ExpiresByType text/html "access plus 1 week"
+              </IfModule>
+              ${versioning ? `
+              <IfModule mod_headers.c>
+                # Force "immutable" cache for versioned files
+                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
+                  Header set Cache-Control "max-age=63072000, immutable"
+                </FilesMatch>
+              </IfModule>
+              ` : `
+              <IfModule mod_headers.c>
+                # Standard cache for non-versioned files
+                <FilesMatch "\.(css|js)$">
+                  Header set Cache-Control "max-age=86400" # 1 day
+                </FilesMatch>
+              </IfModule>
+              `}
+            `
+          };
+        return (optimisation[chacheProfile] || "")
+        .trim()
+        .replace(/^[ \t]+/gm, '');
+    }
 
-					`;
-					break;
-			
-				case '6':
-					rewriteUrl += 
-					`	# Redirect to HTTP + WWW #
-						RewriteCond %{HTTPS} off [OR]
-						RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-						RewriteRule ^ http://www.%1%{REQUEST_URI} [L,R=301]
+    generateRedirects() {
+        if (!this.config.rewriteUrl) return ""; // Empty string se 'Canonical URL Redirect' è disabilitato
+        
+        const redirectType = this.config.redirect || "0";
+        //Oggetto JS che contiene opzione-direttiva, si richiama con redirects[n]
+        const redirects = {
+            '1': `
+                ## Redirect HTTPS + WWW
+                RewriteEngine On
+                RewriteCond %{HTTPS} off [OR]
+				RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+				RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
+            `,
 
-					`;
-					break;
-			
-				case '7':
-					rewriteUrl += 
-					`	# Redirect to HTTP + no-WWW #
-						# Force HTTP without www when the protocol is HTTPS and the host contains www
-						RewriteCond %{HTTPS} on
-						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-						RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
-						# Force HTTP without www when the protocol is already HTTP (ensure no www)
-						RewriteCond %{HTTPS} off
-						RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-						RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
-						# Redirect HTTPS without www to HTTP without www
-						RewriteCond %{HTTPS} on
-						RewriteCond %{HTTP_HOST} ^miosito\.it$ [NC]
-						RewriteRule ^ http://miosito.it%{REQUEST_URI} [L,NE,R=301]
+            '2': `
+                ## Redirect HTTPS + no-WWW
+                RewriteEngine On
+                RewriteCond %{HTTPS} off [OR]
+                RewriteCond %{HTTP_HOST} ^www\. [NC]
+                RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+                RewriteRule ^ https://%1%{REQUEST_URI} [L,NE,R=301]
+            `,
 
-					`;
-					break;
-			
-				case '8':
-					rewriteUrl += 
-					`	# Redirect to HTTP (no preference for www or no-www) #
-						RewriteCond %{HTTPS} on
-						RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+            '3': `
+                ## Redirect to HTTPS (no preference)
+                RewriteEngine On
+                RewriteCond %{HTTPS} off
+                RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+            `,
 
-					`;
-					break;
-			
-				default:
-					rewriteUrl += 
-					`	# No redirect or invalid option
+            '4': `
+                ## Redirect to WWW (preserve protocol)
+                RewriteEngine On
+                RewriteCond %{HTTPS} on
+                RewriteCond %{HTTP_HOST} !^www\. [NC]
+                RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+                RewriteCond %{HTTPS} off
+                RewriteCond %{HTTP_HOST} !^www\. [NC]
+                RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+            `,
 
-					`;
-					break;
-			}
-				
-		}
+            '5': `
+                ## Redirect to no-WWW (preserve protocol)
+                RewriteEngine On
+                RewriteCond %{HTTPS} on
+                RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+                RewriteRule ^(.*)$ https://%1/$1 [L,NE,R=301]
+                RewriteCond %{HTTPS} off
+                RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+                RewriteRule ^(.*)$ http://%1/$1 [L,NE,R=301]
+            `,
 
-		//Rewrite SEO Urls
-		let redirectSeo = ""
-		if (this.config.redirectSeo) {
-			let urls = []	// Initialize the array to store redirect strings
-			if (Array.isArray(this.config.repeaterUrlList)) {
-				this.config.repeaterUrlList.forEach((elements) => {
-					const redirect = `Redirect ${elements.type} ${elements.oldUrl} ${elements.newUrl}` 
-					urls.push(redirect) // Add the redirect string to the array
-				});
-				// Build the final redirectSeo string with custom text before and after
-				redirectSeo = "	# Redirect URLs\n"
-				redirectSeo += urls.join("\n"); // Combine all redirect strings with newline
-				redirectSeo += "\n\n";
-			}
-		}
+            '6': `
+                ## Redirect to HTTP + WWW
+                RewriteEngine On
+                RewriteCond %{HTTPS} off [OR]
+                RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+                RewriteRule ^ http://www.%1%{REQUEST_URI} [L,R=301]
+            `,
 
-		//Custom 404 Error Page
-		let error404 = ""
-		let subfolder = this.config.path404
-		subfolder = subfolder.replace(/\/$/, '');
-		if (this.config.redirect404) {
-			error404 = 
-			`	# Custom 404 Error Page
-				ErrorDocument 404 ${subfolder}/404.html
+            '7': `
+                ## Redirect to HTTP + no-WWW
+                RewriteEngine On
+                RewriteCond %{HTTPS} on [OR]
+                RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+                RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
+            `,
 
-			`
-		}
+            '8': `
+                ## Redirect to HTTP (no preference)
+                RewriteEngine On
+                RewriteCond %{HTTPS} on
+                RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+            `
+        };
+        // restituisce la direttiva scelta dall'utente
+        return (redirects[redirectType] || "")
+            .trim()
+            .replace(/^[ \t]+/gm, '');
+    }
 
-		//Protect files.publii.json
-		let protectFileList = ""
-		if (this.config.protectFileList) {
-			protectFileList = 
-			`	# Blocking access files.publii.json
-				<Files "files.publii.json">
-					Require all denied
-				</Files>
+    generateSeoRedirects() {
+        if (!this.config.redirectSeo) return ""; // Empty string se 'Redirect URLs' è disabilitato
+        const urls = this.config.repeaterUrlList
+            .map(e => `Redirect ${e.type} ${e.oldUrl} ${e.newUrl}`)
+            .join('\n');
+        
+        return `
+            ## SEO Redirects
+            ${urls}
+        `.trim();
+    }
 
-			`;
-		}
+    generate404() {
+        if (!this.config.redirect404) return ""; // Empty string se Redirect '404 è disabilitato'
+        const path404 = (this.config.path404 || "").replace(/\/$/, "");
+        
+        return `
+            ## Custom 404 Error Page
+            ErrorDocument 404 ${path404}/404.html
+        `.trim();
+    }
 
-		//Gzip compression
-		let gzip = ""
-		if (this.config.gzip) {
-			gzip = 
-			`	# Enable Gzip compression
-				<IfModule mod_deflate.c>
-					AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
-					AddOutputFilterByType DEFLATE text/javascript application/javascript application/json
-					AddOutputFilterByType DEFLATE application/x-javascript application/xml application/xml+rss
-					AddOutputFilterByType DEFLATE application/font-woff2 application/font-woff application/font-ttf
-					AddOutputFilterByType DEFLATE image/svg+xml
-				</IfModule>
-				
-			`
-		}
+    generateFileProtection() {
+        if (!this.config.protectFileList) return ""; // Empty string se Protect 'files.publii.json' è disavilitato
+        
+        return `
+            ## Block access to files.publii.json
+            <Files "files.publii.json">
+                Require all denied
+            </Files>
+        `.trim();
+    }
 
-		//Custom directives
-		let custom = ""
-		if (this.config.custom) {
-			custom = 
-			`	# Custom directives
-				${this.config.personal}
-			`
-		}
+    generateCustomDirectives() {
+        if (!this.config.custom ) return ""; // Empty string se 'Custom Directives'
+        
+        return `
+            ## Custom Directives
+            ${this.config.personal}
+        `.trim();
+    }
 
-		//Write directives in appropriate order
-		content = gzip + rewriteUrl + redirectSeo + error404 + protectFileList + custom 
-		content = content
-			.replace(/[ \t]+/g, ' ')    // Removes double spaces and tabs, replacing them with a single space
-			.replace(/^[ \t]+/gm, '')   // Removes spaces and tabs at the beginning of each line
-			.trim();                    // Removes spaces at the start and end of the entire string
-
-
-		//create file in root folder
-		this.API.createFile(`[ROOT-FILES]/${output}`, content, this);
-	}
-	
+    createHtaccessFile(content) {
+        //genera il file .htaccess o htaccess.txt nella cartella ROOT
+        const outputFile = this.config.output || ".htaccess";
+        const finalContent = `## File generated by EasyHtaccess Plugin\n\n${content}`;
+        this.API.createFile(`[ROOT-FILES]/${outputFile}`, finalContent, this);
+    }
 }
 
 module.exports = EasyHtaccess;

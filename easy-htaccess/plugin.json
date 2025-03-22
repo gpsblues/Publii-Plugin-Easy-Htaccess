@@ -3,7 +3,7 @@
     "description": "A simple and user-friendly plugin to create and manage .htaccess files with essential optimizations for your website.",
     "license": "GPL-3.0",
     "author": "Vittorio Ramponi - www.mywebpassion.it",
-    "version": "0.1.0-beta", 
+    "version": "0.2.0-beta",
     "scope": "site",
     "minimumPubliiVersion": "0.42.0",
     "usePluginSettingsView": false,
@@ -43,16 +43,16 @@
             "type": "select",
             "options": [
                 {
-                    "label": "htaccess.txt",
+                    "label": "✅ htaccess.txt",
                     "value": "htaccess.txt"
 
                 },
                 {
-                    "label": ".htaccess",
+                    "label": "⚠️ .htaccess",
                     "value": ".htaccess"
                 }
             ],
-            "note": "Select <span class='mark'>htaccess.txt</span> for testing. This file will take effect only if renamed.<br>Select <span class='mark'>.htaccess</span> for production. Synchronizing will overwrite previous versions.",
+            "note": "Select <span class='mark'>htaccess.txt</span> for testing [safe]. This file will take effect only if manual renamed in '.htaccess'.<br>Select <span class='mark'>.htaccess</span> for production [caution]. Synchronizing will overwrite previous file versions.",
             "dependencies": [
                 {
                     "field": "destroy",
@@ -261,7 +261,7 @@
             "name": "path404",
             "label": " subfolder path",
             "group": "Directives",
-            "note": "Leave empty if the site is locate in the root directory.<br>For example: <span class='mark'>/subfolder</span> if the site is located at <strong>www.mydomain.net/subfolder</strong>.<br>In some cases you might need to provide the absolute server path or the host URL.<br>If unsure, check your site’s structure or contact your hosting provider for guidance.",
+            "note": "Leave empty if the site is locate in the root directory.<br>Use <span class='mark'>/subfolder</span> if the site is located at <strong>www.mydomain.net/subfolder</strong>.<br>In some cases, the absolute server path may be required.<br>If unsure, check your site’s structure or contact your hosting provider for guidance.",
             "value": "",
             "type": "test",
             "dependencies": [
@@ -321,13 +321,165 @@
             "name": "gzip",
             "label": "Gzip compression",
             "group": "Directives",
-            "note": "Enable Gzip compression to improve site performance by reducing file sizes. This option works only if the server supports Gzip. If you're unsure, contact your hosting provider for more information.",
+            "note": "Enable Gzip compression to improve site performance by reducing file sizes. This option works only if the server supports Gzip.",
             "value": false,
             "type": "checkbox",
             "dependencies": [
                 {
                     "field": "destroy",
                     "value": false
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "",
+            "size": "thin",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "expires",
+            "label": "Expires Headers",
+            "group": "Directives",
+            "note": "Enable Expires Headers to improve site performance by instructing browsers to cache static files. This option works only if your server supports Expires Headers.",
+            "value": false,
+            "type": "checkbox",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "cache",
+            "label": "Cache optimisation",
+            "group": "Directives",
+            "note": "Choose the caching level based on your site's needs, balancing speed, resource usage, and update frequency.<br>The optimization automatically adjusts to whether versioning is enabled or disabled.<br>(see: Site settings > Website speed > Version parameter).",
+            "value": "2",
+            "type": "select",
+            "options": [
+                {
+                    "label": "⚙️ Disables caching",
+                    "value": "0"
+                },
+                {
+                    "label": "🔄 Frequent Updates",
+                    "value": "1"
+                },
+                {
+                    "label": "⚖️ Balanced Performance",
+                    "value": "2"         
+                },
+                {
+                    "label": "🚀 Maximum Speed",
+                    "value": "3"
+                }
+            ],
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "expires",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "<strong>Disables caching</strong>. Loads all resources fresh every time. Ideal for development to instantly see changes without clearing the cache.",
+            "size": "no-line",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "expires",
+                    "value": true
+                },
+                {
+                    "field": "cache",
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "<strong>Frequent Updates</strong>. Ideal for blogs, news sites, recipes sites or any content updated frequently. Keeps your site fast while ensuring visitors see the latest changes.",
+            "size": "no-line",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "expires",
+                    "value": true
+                },
+                {
+                    "field": "cache",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "<strong>Balanced Performance</strong>. Ideal for corporate sites, service pages, small business websites with occasional updates. Optimizes speed while keeping content fresh for your visitors.",
+            "size": "no-line",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "expires",
+                    "value": true
+                },
+                {
+                    "field": "cache",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "name": "separator",
+            "type": "separator",
+            "label": "",
+            "group": "Directives",
+            "note": "<strong>Maximum Speed</strong>. Ideal for blogs, news sites, or any content updated frequently. Keeps your site fast while ensuring visitors see the latest changes. This profile is optimized for very static content.",
+            "size": "no-line",
+            "dependencies": [
+                {
+                    "field": "destroy",
+                    "value": false
+                },
+                {
+                    "field": "expires",
+                    "value": true
+                },
+                {
+                    "field": "cache",
+                    "value": "3"
                 }
             ]
         },
@@ -365,8 +517,7 @@
             "group": "Directives",
             "value": "",
             "type": "textarea",
-            "rows": 8,
-            "disabled": false,
+            "rows": 12,
             "note": "Directives will be appended to the end of the .htaccess or htaccess.txt file.",
             "dependencies": [
                 {
@@ -382,7 +533,7 @@
         {
             "name": "destroy",
             "label": "Empty .htaccess",
-            "group": "Remove Directives",
+            "group": "⛔ Remove Directives",
             "note": "Clears the content of the .htaccess file <strong>after synchronization</strong>. This action is equivalent to deleting the file and may be useful before uninstalling the plugin.",
             "value": false,
             "type": "checkbox"

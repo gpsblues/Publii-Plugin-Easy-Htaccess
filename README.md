@@ -40,8 +40,19 @@ You can specify either the absolute server path or the host URL or the subfolder
 ### Protecting the files.publii.json File
 With this option, you can make the `files.publii.json` file unreachable from the outside. [More information](https://getpublii.com/docs/recommended-server-settings.html#protectingthefilespubliijsonfile).
 
-### Gzip Compression (experimental)  
+### Gzip Compression 
 Enable Gzip compression to improve site performance by reducing file sizes. This option works only if the server supports Gzip. If you're unsure, contact your hosting provider for more information.
+
+### Expires Headers
+
+Optimize your site's performance with customizable caching levels. The **Expires Headers** feature automatically adjusts based on whether versioning is enabled or disabled, ensuring optimal performance for your specific needs. Choose from four profiles:
+
+- **⚙️ Disables caching**: Loads all resources fresh every time. Ideal for development to instantly see changes without clearing the cache.  
+- **🔄 Frequent Updates**: Perfect for blogs, news sites, or any content updated frequently. Keeps your site fast while ensuring visitors see the latest changes.  
+- **⚖️ Balanced Performance**: Best for corporate sites, service pages, or small business websites with occasional updates. Balances speed and content freshness.  
+- **🚀 Maximum Speed**: Optimized for very static content, delivering the fastest possible performance.  
+
+To check if versioning is enabled, go to: `Site settings > Website speed > Version parameter`.
 
 ### Custom Directives
 Manually add your custom directives here. These will be appended to the end of the `.htaccess` file.
