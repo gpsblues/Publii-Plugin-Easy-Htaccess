@@ -1,7 +1,7 @@
 # Publii Plugin: Easy .htaccess
 A simple and user-friendly plugin to create and manage .htaccess files with essential optimizations for your website.
 
-<p><img height="100" alt="publii plugin" title="Plugin icons" src="https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/802bbe1ad69aafd209050b19b37371a913fe547f/.assets/thumbnail.svg"></p>
+<p><img height="100" style="height:100px;" alt="publii plugin" title="Plugin icons" src="https://raw.githubusercontent.com/gpsblues/Publii-Plugin-Easy-Htaccess/802bbe1ad69aafd209050b19b37371a913fe547f/.assets/thumbnail.svg"></p>
 
 ## Features
 This plugin creates an **.htaccess** file with essential optimizations to enhance site performance. It includes HTTPS and 404 redirections, Gzip file compression, and custom directives. Please note that modifying the .htaccess file is at your own risk; the author assumes no responsibility for malfunctions or data loss. **A backup of the original .htaccess file is strongly recommended**, as these changes cannot be undone. This feature only works on Apache servers with .htaccess support.
