@@ -8,7 +8,6 @@ class EasyHtaccess {
     addEvents() {
         this.API.addEvent('beforeRender', this.addFile, 1, this);
     }
-
     addFile(rendererInstance) {
         if (this.config.destroy) {
             this.createHtaccessFile("## Empty file (Removes Directives = true)");
@@ -63,123 +62,132 @@ class EasyHtaccess {
         const chacheProfile = this.config.cache || "0";
         //Oggetto JS che contiene opzione-cache, si richiama con optimisation[n]
         const optimisation = {
-            "0": `
-              ## Cache disabled
-              <IfModule mod_expires.c>
-                ExpiresActive Off
-              </IfModule>
-              <IfModule mod_headers.c>
-                # Disable cache for all resources
-                Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-                Header set Pragma "no-cache"
-                Header set Expires "0"
-              </IfModule>
-            `,
-          
-            "1": `
-              ## Cache optimisation for Frequent Updates
-              <IfModule mod_expires.c>
-                ExpiresActive On
-                ExpiresDefault "access plus 1 week"
-                # Images (medium cache)
-                ExpiresByType image/jpeg "access plus 6 months"
-                ExpiresByType image/png "access plus 6 months"
-                ExpiresByType image/webp "access plus 6 months"
-                ExpiresByType image/svg+xml "access plus 6 months"
-                ExpiresByType image/x-icon "access plus 6 months"
-                # CSS/JS (long cache with versioning, otherwise short)
-                ExpiresByType text/css "access plus 1 year"
-                ExpiresByType application/javascript "access plus 1 year"
-                # Dynamic content (short cache)
-                ExpiresByType text/html "access plus 2 hours"
-                ExpiresByType application/rss+xml "access plus 1 hour"
-              </IfModule>
-              ${versioning ? `
-              <IfModule mod_headers.c>
-                # Force "immutable" cache for versioned files
-                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
-                  Header set Cache-Control "max-age=31536000, immutable"
-                </FilesMatch>
-              </IfModule>
-              ` : `
-              <IfModule mod_headers.c>
-                # Standard cache for non-versioned files
-                <FilesMatch "\.(css|js)$">
-                  Header set Cache-Control "max-age=86400" # 1 day
-                </FilesMatch>
-              </IfModule>
-              `}
-            `,
-          
-            "2": `
-              ## Cache optimisation for Balanced Performance
-              <IfModule mod_expires.c>
-                ExpiresActive On
-                ExpiresDefault "access plus 1 month"
-                # Images (long cache)
-                ExpiresByType image/jpeg "access plus 1 year"
-                ExpiresByType image/png "access plus 1 year"
-                ExpiresByType image/webp "access plus 1 year"
-                ExpiresByType image/svg+xml "access plus 1 year"
-                ExpiresByType image/x-icon "access plus 1 year"
-                # CSS/JS (long cache with versioning, otherwise medium)
-                ExpiresByType text/css "access plus 1 year"
-                ExpiresByType application/javascript "access plus 1 year"
-                # Dynamic content (medium cache)
-                ExpiresByType text/html "access plus 1 day"
-                ExpiresByType application/pdf "access plus 1 month"
-              </IfModule>
-              ${versioning ? `
-              <IfModule mod_headers.c>
-                # Force "immutable" cache for versioned files
-                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
-                  Header set Cache-Control "max-age=31536000, immutable"
-                </FilesMatch>
-              </IfModule>
-              ` : `
-              <IfModule mod_headers.c>
-                # Standard cache for non-versioned files
-                <FilesMatch "\.(css|js)$">
-                  Header set Cache-Control "max-age=604800" # 1 week
-                </FilesMatch>
-              </IfModule>
-              `}
-            `,
-          
-            "3": `
-              ## Cache optimisation for Maximum Speed
-              <IfModule mod_expires.c>
-                ExpiresActive On
-                ExpiresDefault "access plus 1 year"
-                # Images (maximum cache)
-                ExpiresByType image/jpeg "access plus 2 years"
-                ExpiresByType image/png "access plus 2 years"
-                ExpiresByType image/webp "access plus 2 years"
-                ExpiresByType image/svg+xml "access plus 2 years"
-                ExpiresByType image/x-icon "access plus 2 years"
-                # CSS/JS (maximum cache with versioning, otherwise not applicable)
-                ExpiresByType text/css "access plus 2 years"
-                ExpiresByType application/javascript "access plus 2 years"
-                # Dynamic content (short cache)
-                ExpiresByType text/html "access plus 1 week"
-              </IfModule>
-              ${versioning ? `
-              <IfModule mod_headers.c>
-                # Force "immutable" cache for versioned files
-                <FilesMatch "\.(css|js)(\?v=[0-9a-f]{32})?$">
-                  Header set Cache-Control "max-age=63072000, immutable"
-                </FilesMatch>
-              </IfModule>
-              ` : `
-              <IfModule mod_headers.c>
-                # Standard cache for non-versioned files
-                <FilesMatch "\.(css|js)$">
-                  Header set Cache-Control "max-age=86400" # 1 day
-                </FilesMatch>
-              </IfModule>
-              `}
-            `
-          };
+          "0": `
+            ## Cache disabled
+            <IfModule mod_expires.c>
+              ExpiresActive Off
+            </IfModule>
+            <IfModule mod_headers.c>
+              # Disable cache for all resources
+              Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+              Header set Pragma "no-cache"
+              Header set Expires "0"
+            </IfModule>
+          `,
+        
+          "1": `
+            ## Cache optimisation for Frequent Updates
+            <IfModule mod_expires.c>
+              ExpiresActive On
+              ExpiresDefault "access plus 1 week"
+              # Images (medium cache)
+              ExpiresByType image/jpeg "access plus 6 months"
+              ExpiresByType image/png "access plus 6 months"
+              ExpiresByType image/webp "access plus 6 months"
+              ExpiresByType image/svg+xml "access plus 6 months"
+              ExpiresByType image/x-icon "access plus 6 months"
+              # CSS/JS
+              ExpiresByType text/css "access plus 1 year"
+              ExpiresByType application/javascript "access plus 1 year"
+              # Dynamic content
+              ExpiresByType text/html "access plus 2 hours"
+              ExpiresByType application/rss+xml "access plus 1 hour"
+              # Font (short cache)
+              ExpiresByType font/woff2  "access plus 2 months"
+              ExpiresByType application/font-woff2  "access plus 2 months"
+              ExpiresByType application/x-font-woff2  "access plus 2 months"
+            </IfModule>
+            ${versioning ? `
+            <IfModule mod_headers.c>
+              <FilesMatch "\\.(css|js)$">
+                Header set Cache-Control "max-age=31536000, immutable"
+              </FilesMatch>
+            </IfModule>
+            ` : `
+            <IfModule mod_headers.c>
+              <FilesMatch "\\.(css|js)$">
+                Header set Cache-Control "max-age=86400"
+              </FilesMatch>
+            </IfModule>
+            `}
+          `,
+        
+        "2": `
+          ## Cache optimisation for Balanced Performance
+          <IfModule mod_expires.c>
+            ExpiresActive On
+            ExpiresDefault "access plus 1 month"
+            # Images (long cache)
+            ExpiresByType image/jpeg "access plus 1 year"
+            ExpiresByType image/png "access plus 1 year"
+            ExpiresByType image/webp "access plus 1 year"
+            ExpiresByType image/svg+xml "access plus 1 year"
+            ExpiresByType image/x-icon "access plus 1 year"
+            # CSS/JS
+            ExpiresByType text/css "access plus 1 year"
+            ExpiresByType application/javascript "access plus 1 year"
+            # Dynamic content
+            ExpiresByType text/html "access plus 1 day"
+            ExpiresByType application/pdf "access plus 1 month"
+            # Font (long cache)
+              ExpiresByType font/woff2  "access plus 1 year"
+              ExpiresByType application/font-woff2  "access plus 1 year"
+              ExpiresByType application/x-font-woff2  "access plus 1 year"
+          </IfModule>
+          ${versioning ? `
+          <IfModule mod_headers.c>
+            <FilesMatch "\\.(css|js)$">
+              Header set Cache-Control "max-age=31536000, immutable"
+            </FilesMatch>
+          </IfModule>
+          ` : `
+          <IfModule mod_headers.c>
+            <FilesMatch "\\.(css|js)$">
+              Header set Cache-Control "max-age=604800"
+            </FilesMatch>
+          </IfModule>
+          `}
+        `,
+        
+          "3": `
+            ## Cache optimisation for Maximum Speed
+            <IfModule mod_expires.c>
+              ExpiresActive On
+              ExpiresDefault "access plus 1 year"
+              # Images (maximum cache)
+              ExpiresByType image/jpeg "access plus 2 years"
+              ExpiresByType image/png "access plus 2 years"
+              ExpiresByType image/webp "access plus 2 years"
+              ExpiresByType image/svg+xml "access plus 2 years"
+              ExpiresByType image/x-icon "access plus 2 years"
+              # CSS/JS (maximum cache)
+              ExpiresByType text/css "access plus 2 years"
+              ExpiresByType application/javascript "access plus 2 years"
+              # Dynamic content (short cache)
+              ExpiresByType text/html "access plus 1 week"
+              # Font (maximum cache)
+              ExpiresByType font/woff2  "access plus 2 year"
+              ExpiresByType application/font-woff2  "access plus 2 year"
+              ExpiresByType application/x-font-woff2  "access plus 2 year"
+            </IfModule>
+            ${versioning ? `
+            <IfModule mod_headers.c>
+              # Apply long immutable cache for versioned files
+              <FilesMatch "\\.(css|js)$">
+                Header set Cache-Control "max-age=63072000, immutable"
+              </FilesMatch>
+            </IfModule>
+            ` : `
+            <IfModule mod_headers.c>
+              # Standard cache for non-versioned files
+              <FilesMatch "\\.(css|js)$">
+                Header set Cache-Control "max-age=86400"
+              </FilesMatch>
+            </IfModule>
+            `}
+          `
+        };
+        
         return (optimisation[chacheProfile] || "")
         .trim()
         .replace(/^[ \t]+/gm, '');
@@ -191,12 +199,21 @@ class EasyHtaccess {
         const redirectType = this.config.redirect || "0";
         //Oggetto JS che contiene opzione-direttiva, si richiama con redirects[n]
         const redirects = {
+            '9':`
+                ## Redirect HTTPS + WWW (2 steps)
+                # Force HTTPS redirect
+                RewriteCond %{HTTPS} off
+                RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+                # Redirect to "non-www" from "www" after HTTPS forcing.
+                RewriteCond %{HTTP_HOST} !^www\. [NC]
+                RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+            `,
             '1': `
-                ## Redirect HTTPS + WWW
+                ## Redirect HTTPS + WWW (1 step)
                 RewriteEngine On
                 RewriteCond %{HTTPS} off [OR]
-				RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-				RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
+				        RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+				        RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
             `,
 
             '2': `
