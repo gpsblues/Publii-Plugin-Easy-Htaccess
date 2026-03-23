@@ -132,7 +132,7 @@
                     "value": 8
                 }
             ],
-            "note": "",
+            "note": "<a href=\"https://github.com/gpsblues/Publii-Plugin-Easy-Htaccess?tab=readme-ov-file#canonical-url-redirect-directives\">See directives on GitHub for details</a>.",
             "dependencies": [
                 {
                     "field": "destroy",
