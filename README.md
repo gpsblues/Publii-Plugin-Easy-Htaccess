@@ -77,6 +77,7 @@ This plugin is an unofficial extension for the [Publii CMS](https://getpublii.co
 For official Publii resources, please visit the [Publii CMS Official Repository](https://marketplace.getpublii.com/plugins/).
 
 ## Canonical URL Redirect Directives
+This section lists all the canonical URL redirect directives available in the plugin.
 
 ### HTTPS + WWW (2 steps)
 ```apache
