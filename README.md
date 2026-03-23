@@ -27,7 +27,7 @@ The plugin allows for selecting multiple options. These options will only take e
 - **`.htaccess`**  directly creates the .htaccess file, overwriting any previous versions.
 
 ### Canonical URL redirect 
-Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility. [See details](#-canonical-url-redirect-directives).
+Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility. [See directives in detail](#canonical-url-redirect-directives).
 
 ### Redirect URLs
 Set up URL redirects directly in the `.htaccess` file by specifying old and new paths. Choose between permanent (301) or temporary (302) redirects. These rules help maintain SEO rankings and prevent broken links.  
