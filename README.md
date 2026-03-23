@@ -27,7 +27,7 @@ The plugin allows for selecting multiple options. These options will only take e
 - **`.htaccess`**  directly creates the .htaccess file, overwriting any previous versions.
 
 ### Canonical URL redirect 
-Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility.
+Enable HTTPS/HTTP redirection and enforce the use of the www or non-www prefix. Various rewrite combinations are available for flexibility. [See details](#-canonical-url-redirect-directives).
 
 ### Redirect URLs
 Set up URL redirects directly in the `.htaccess` file by specifying old and new paths. Choose between permanent (301) or temporary (302) redirects. These rules help maintain SEO rankings and prevent broken links.  
@@ -75,3 +75,84 @@ Uninstalling or deactivating this plugin will not remove the `.htaccess` file cr
 This plugin is an unofficial extension for the [Publii CMS](https://getpublii.com/). I do not assume any responsibility for potential issues or malfunctions that may occur while using this plugin. Additionally, support for this plugin is not guaranteed.
 
 For official Publii resources, please visit the [Publii CMS Official Repository](https://marketplace.getpublii.com/plugins/).
+
+## Canonical URL Redirect Directives
+
+### HTTPS + WWW (2 steps)
+```apache
+# Force HTTPS redirect
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Redirect to "www" from "non-www" after HTTPS forcing
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
+
+### HTTPS + WWW (1 step)
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ https://www.%1%{REQUEST_URI} [L,R=301]
+```
+
+### HTTPS + no-WWW
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,NE,R=301]
+```
+
+### HTTPS only
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
+
+### WWW only (preserve protocol)
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} on
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+```
+
+### no-WWW only (preserve protocol)
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} on
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [L,NE,R=301]
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [L,NE,R=301]
+```
+
+### HTTP + WWW
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ http://www.%1%{REQUEST_URI} [L,R=301]
+```
+
+### HTTP + no-WWW
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} on [OR]
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^ http://%1%{REQUEST_URI} [L,NE,R=301]
+```
+
+### HTTP only
+```apache
+RewriteEngine On
+RewriteCond %{HTTPS} on
+RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
